@@ -27,16 +27,44 @@ const showSidebar = (toggleId, sidebarId, headerId, mainId) =>{
 showSidebar('header-toggle','sidebar', 'header', 'main')
 
 
-
 /*=============== LINK ACTIVE ===============*/
-const sidebarLink = document.querySelectorAll('.sidebar__list a')
+const sidebarLink = document.querySelectorAll('.sidebar__link');
 
-function linkColor(){
-    sidebarLink.forEach(l => l.classList.remove('active-link'))
-    this.classList.add('active-link')
+function linkColor(event) {
+    const subMenu = this.nextElementSibling; // Get the next sibling of the clicked link
+    const isArrowClick = event.target.classList.contains('ri-arrow-drop-right-line'); // Check if the arrow is clicked
+
+    // If the clicked link has a submenu
+    if (subMenu && subMenu.classList.contains('SubDocument')) {
+        // If the arrow is clicked, toggle submenu visibility
+        if (isArrowClick) {
+            event.preventDefault(); // Prevent default action of the link
+
+            // Toggle the submenu's active state
+            const isActive = subMenu.classList.toggle('active'); // Toggle active class
+
+            // Adjust max height for submenu visibility
+            subMenu.style.maxHeight = isActive ? subMenu.scrollHeight + "px" : 0;
+
+            // Remove 'active-link' from all links first
+            sidebarLink.forEach(link => link.classList.remove('active-link'));
+
+            // Add 'active-link' to the current link if the submenu is active
+            if (isActive) {
+                this.classList.add('active-link');
+            }
+        }
+    } else {
+        // If it doesn't have a submenu, remove active link from others
+        sidebarLink.forEach(link => link.classList.remove('active-link'));
+        this.classList.add('active-link'); // Add active link to the clicked link
+    }
 }
 
-sidebarLink.forEach(l => l.addEventListener('click', linkColor))
+// Add event listeners to the links
+sidebarLink.forEach(link => link.addEventListener('click', linkColor));
+
+
 
 /*=============== DARK LIGHT THEME ===============*/ 
 const themeButton = document.getElementById('theme-button')
@@ -67,3 +95,6 @@ themeButton.addEventListener('click', () => {
     localStorage.setItem('selected-theme', getCurrentTheme())
     localStorage.setItem('selected-icon', getCurrentIcon())
 })
+
+
+
